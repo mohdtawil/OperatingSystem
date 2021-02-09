@@ -1,0 +1,48 @@
+import java.util.Scanner;
+import java.text.ParseException;
+import java.util.concurrent.TimeUnit;
+
+public class MultiThread {
+
+	 public static void main(String []args){
+		
+		Scanner input=new Scanner(System.in); 
+		System.out.print("Enter the number of elements : ");
+		int num = input.nextInt();
+		System.out.print("Enter the elements : ");
+		int [] numbers = new int[num];
+		for(int i=0 ; i<num ;i++) {
+			numbers[i] = input.nextInt();
+		}
+		long startTime = System.nanoTime();
+		int sum=0;
+		int min=numbers[0];
+		int max = numbers[0];
+		for(int i=0;i<numbers.length;i++) {
+			sum += numbers[i];
+			if (min > numbers[i])
+			{
+				min = numbers[i];
+			}
+			if (max < numbers[i])
+			{
+				max = numbers[i];
+			}
+		}
+		long endTime = System.nanoTime();
+		
+		long durationInNano = (endTime - startTime);  //Total execution time in nano seconds
+		
+		//Same duration in millis
+		
+		long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);  //Total execution time in nano seconds
+		System.out.println("take time in durationInNano : " + durationInNano);
+		System.out.println("take time in durationInMillis : " + durationInMillis);
+		//System.out.println(durationInNano);
+		//System.out.println(durationInMillis);
+		
+		System.out.println("The Avarage Value : " + sum/num + "\n"+ "The Minimum Value : " + min + "\n" + "The Maximum Value : " + max);
+		
+	 }
+	 
+}

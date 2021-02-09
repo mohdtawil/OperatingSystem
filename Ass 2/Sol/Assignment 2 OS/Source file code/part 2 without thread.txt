@@ -1,0 +1,118 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+public class Sorting {
+	public static void main(String []args) {
+		ArrayList<Integer> list_one=new ArrayList<Integer>();
+		list_one.add(5);
+		list_one.add(2);
+		list_one.add(9);
+		list_one.add(8);
+		list_one.add(15);
+		list_one.add(12);
+		list_one.add(19);
+		list_one.add(18);
+		
+		long startTime = System.nanoTime();
+		
+		ArrayList<Integer> list_tow=new ArrayList<Integer>();
+		ArrayList<Integer> list_three=new ArrayList<Integer>();
+		ArrayList<Integer> list_four=new ArrayList<Integer>();
+		ArrayList<Integer> list_five=new ArrayList<Integer>();
+		System.out.println("list numbers not sorted");
+		for(int i=0 ;i < list_one.size() ;i++) {
+			if(i<list_one.size()/ 4 ) {
+				System.out.println(list_one.get(i));
+				list_tow.add(list_one.get(i));
+			}
+			else if(i< list_one.size()/2) 
+			{
+				System.out.println(list_one.get(i));
+				list_three.add(list_one.get(i));
+			}
+			else if(i<list_one.size()-list_one.size()/4)
+			{
+				System.out.println(list_one.get(i));
+				list_four.add(list_one.get(i));
+			}
+			else {
+				
+					System.out.println(list_one.get(i));
+					list_five.add(list_one.get(i));
+			}
+				
+		}
+		Sort sort1=new Sort(list_tow);
+		Sort sort2=new Sort(list_three);
+		Sort sort3=new Sort(list_four);
+		Sort sort4=new Sort(list_five);
+		sort1.run();
+		sort2.run();
+		sort3.run();
+		sort4.run();
+		Merge merge1 = new Merge(sort1.getList(),sort2.getList());
+		merge1.run();
+		Merge merge2 = new Merge(sort3.getList(),sort4.getList());
+		merge2.run();
+		Merge merge3= new Merge(merge1.getList(),merge2.getList());
+		merge3.run();
+		ArrayList<Integer> arraylist = merge3.getList();
+		System.out.println("list numbers sorted");
+		for(int i=0;i<arraylist.size();i++) {
+			System.out.println(arraylist.get(i));
+		}
+		
+		long endTime = System.nanoTime();
+		
+		long durationInNano = (endTime - startTime);  //Total execution time in nano seconds
+		
+		//Same duration in millis
+		
+		long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);  //Total execution time in nano seconds
+		
+		System.out.println("\n \n take time in durationInNano : " + durationInNano);
+		System.out.println("take time in durationInMillis : " + durationInMillis);
+	}
+	
+	static class Sort {
+		static int count=0;
+		ArrayList<Integer> x = new ArrayList<>();
+		public Sort(ArrayList<Integer>x) {
+			for(int i = 0 ;i<x.size();i++) {
+				this.x.add(x.get(i));
+			}
+		}
+		
+		public void run() {
+			// TODO Auto-generated method stub
+			Collections.sort(x);
+		}
+		public ArrayList<Integer> getList(){
+			return x;
+		}
+		
+		
+	}
+	static class Merge {
+		
+		ArrayList<Integer>x = new ArrayList<>();
+		ArrayList<Integer>y = new ArrayList<>();
+		public Merge(ArrayList<Integer>x,ArrayList<Integer>y) {
+			this.x.addAll(x);
+			this.y.addAll(y);
+		}
+		
+		public void run() {
+			
+			this.x.addAll(y);
+			Collections.sort(x);
+		}
+		public ArrayList<Integer> getList(){
+			return x; 
+		}
+	}
+
+
+
+}

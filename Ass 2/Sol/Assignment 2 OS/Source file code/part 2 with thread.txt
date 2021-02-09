@@ -1,0 +1,141 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+public class Sorting implements Runnable {
+	public static void main(String []args) {
+		ArrayList<Integer> list_one=new ArrayList<Integer>();
+		list_one.add(5);
+		list_one.add(2);
+		list_one.add(9);
+		list_one.add(8);
+		list_one.add(15);
+		list_one.add(12);
+		list_one.add(19);
+		list_one.add(18);
+		
+		long startTime = System.nanoTime();
+		
+		ArrayList<Integer> list_tow=new ArrayList<Integer>();
+		ArrayList<Integer> list_three=new ArrayList<Integer>();
+		ArrayList<Integer> list_four=new ArrayList<Integer>();
+		ArrayList<Integer> list_five=new ArrayList<Integer>();
+		for(int i=0 ;i < list_one.size() ;i++) {
+			if(i<list_one.size()/ 4 )
+				list_tow.add(list_one.get(i));
+			else if(i< list_one.size()/2) 
+				list_three.add(list_one.get(i));
+			else if(i<list_one.size()-list_one.size()/4)
+				list_four.add(list_one.get(i));
+			else
+				list_five.add(list_one.get(i));
+		}
+		Sort sort1=new Sort(list_tow);
+		Sort sort2=new Sort(list_three);
+		Sort sort3=new Sort(list_four);
+		Sort sort4=new Sort(list_five);
+		sort1.start();
+		sort2.start();
+		sort3.start();
+		sort4.start();
+		Merge merge1 = new Merge(sort1.getList(),sort2.getList());
+		Merge merge2 = new Merge(sort3.getList(),sort4.getList());
+		try {
+			sort1.join();
+			sort2.join();
+		}
+		catch(Exception ex) {
+			System.out.println(ex);
+		}
+		merge1.start();
+		try {
+			merge1.join();
+		}
+		catch(Exception ex) {
+			System.out.println(ex);
+		}
+		try {
+			sort3.join();
+			sort4.join();
+		}
+		catch(Exception ex) {
+			System.out.println(ex);
+		}
+		merge2.start();
+		try {
+			merge2.join();
+		}
+		catch(Exception ex) {
+			System.out.println(ex);
+		}
+		Merge merge3= new Merge(merge1.getList(),merge2.getList());
+		merge3.start();
+		ArrayList<Integer> arraylist = merge3.getList();
+		System.out.println("list numbers");
+		for(int i=0;i<arraylist.size();i++) {
+			System.out.println(arraylist.get(i));
+		}
+		
+		long endTime = System.nanoTime();
+		
+		long durationInNano = (endTime - startTime);  //Total execution time in nano seconds
+		
+		//Same duration in millis
+		
+		long durationInMillis = TimeUnit.NANOSECONDS.toMillis(durationInNano);  //Total execution time in nano seconds
+		
+		System.out.println("\n \n take time with thread  in durationInNano : " + durationInNano);
+		System.out.println("take time with thread in durationInMillis : " + durationInMillis);
+	}
+	
+	static class Sort extends Thread{
+
+		ArrayList<Integer> x = new ArrayList<>();
+		public Sort(ArrayList<Integer>x) {
+			for(int i = 0 ;i<x.size();i++) {
+				this.x.add(x.get(i));
+			}
+		}
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Collections.sort(x);
+		}
+		public ArrayList<Integer> getList(){
+			return x;
+		}
+		
+		
+	}
+	static class Merge extends Thread{
+		
+		ArrayList<Integer>x = new ArrayList<>();
+		ArrayList<Integer>y = new ArrayList<>();
+		public Merge(ArrayList<Integer>x,ArrayList<Integer>y) {
+			for(int i = 0 ;i<x.size();i++) {
+				this.x.add(x.get(i));
+			}
+			for(int i = 0 ;i<y.size();i++) {
+				this.y.add(y.get(i));
+			}
+		}
+		@Override
+		public void run() {
+			synchronized(x){
+			this.x.addAll(y);
+			Collections.sort(x);
+			}
+		}
+		public ArrayList<Integer> getList(){
+			return this.x;
+		}
+	}
+
+	
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
